@@ -348,13 +348,12 @@
                 const commitmentId = Math.floor(Math.random() * 10000); // Generate a random commitment ID
                 const botLink = `https://telegram.me/pomotono_bot?commitment=${commitmentId}`;
                 
-                Telegram.WebApp.showAlert(`Bet confirmed! Your goal: "${goal}" by ${deadline}. You bet ${stars} stars.`);
                 hideBetPopup();
 
                 // Show the link to share with friends
                 Telegram.WebApp.showPopup({
-                    title: "Share Your Commitment",
-                    message: `Share this link with your friends to join your commitment:\n\n${botLink}`,
+                    title: "Bet Confirmed!",
+                    message: `Your goal: "${goal}" by ${deadline}. You bet ${stars} stars.\n\nShare this link with your friends to join your commitment:\n\n${botLink}`,
                     buttons: [
                         {type: "default", text: "Copy Link", id: "copy_link"},
                         {type: "cancel", text: "Close"}
