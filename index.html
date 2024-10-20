@@ -48,12 +48,36 @@
             font-size: 18px;
             font-weight: bold;
         }
+
+        #plant-container {
+            width: 200px;
+            height: 200px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .plant-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .plant-image.active {
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body>
     <h1>Pomodoro Timer</h1>
     <div id="timer">25:00</div>
+    <div id="plant-container">
+        <img src="assets/1.png" alt="Tomato Plant 1" class="plant-image" id="plant1">
+        <img src="assets/2.png" alt="Tomato Plant 2" class="plant-image" id="plant2">
+    </div>
     <div>
         <button id="startBtn">Start</button>
         <button id="resetBtn">Reset</button>
@@ -70,14 +94,29 @@
         let seconds = 0;
         let isActive = false;
         let isBreak = false;
+        let currentPlant = 1;
 
         const timerDisplay = document.getElementById('timer');
         const startBtn = document.getElementById('startBtn');
         const resetBtn = document.getElementById('resetBtn');
         const statusDisplay = document.getElementById('status');
+        const plant1 = document.getElementById('plant1');
+        const plant2 = document.getElementById('plant2');
 
         function updateDisplay() {
             timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function togglePlant() {
+            if (currentPlant === 1) {
+                plant1.classList.remove('active');
+                plant2.classList.add('active');
+                currentPlant = 2;
+            } else {
+                plant2.classList.remove('active');
+                plant1.classList.add('active');
+                currentPlant = 1;
+            }
         }
 
         function toggleTimer() {
@@ -87,6 +126,7 @@
             } else {
                 timer = setInterval(updateTimer, 1000);
                 startBtn.textContent = 'Pause';
+                plant1.classList.add('active');
             }
             isActive = !isActive;
         }
@@ -97,6 +137,7 @@
             } else if (minutes > 0) {
                 minutes--;
                 seconds = 59;
+                togglePlant();
             } else {
                 clearInterval(timer);
                 isActive = false;
@@ -111,6 +152,7 @@
                     statusDisplay.textContent = 'Break Time';
                 }
                 Telegram.WebApp.showAlert(isBreak ? 'Break time! Take 5 minutes off.' : 'Work time! Focus for 25 minutes.');
+                resetPlantDisplay();
             }
             updateDisplay();
         }
@@ -124,6 +166,13 @@
             startBtn.textContent = 'Start';
             statusDisplay.textContent = 'Work Time';
             updateDisplay();
+            resetPlantDisplay();
+        }
+
+        function resetPlantDisplay() {
+            plant1.classList.remove('active');
+            plant2.classList.remove('active');
+            currentPlant = 1;
         }
 
         startBtn.addEventListener('click', toggleTimer);
