@@ -345,8 +345,26 @@
             const stars = starsInput.value;
 
             if (goal && deadline) {
+                const commitmentId = Math.floor(Math.random() * 10000); // Generate a random commitment ID
+                const botLink = `https://telegram.me/pomotono_bot?commitment=${commitmentId}`;
+                
                 Telegram.WebApp.showAlert(`Bet confirmed! Your goal: "${goal}" by ${deadline}. You bet ${stars} stars.`);
                 hideBetPopup();
+
+                // Show the link to share with friends
+                Telegram.WebApp.showPopup({
+                    title: "Share Your Commitment",
+                    message: "Share this link with your friends to join your commitment:",
+                    buttons: [
+                        {type: "default", text: "Copy Link", id: "copy_link"},
+                        {type: "cancel", text: "Close"}
+                    ]
+                }, function(buttonId) {
+                    if (buttonId === "copy_link") {
+                        Telegram.WebApp.copyTextToClipboard(botLink);
+                        Telegram.WebApp.showAlert("Link copied to clipboard!");
+                    }
+                });
             } else {
                 Telegram.WebApp.showAlert('Please fill in all fields.');
             }
