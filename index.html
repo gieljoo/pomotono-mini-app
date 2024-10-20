@@ -81,7 +81,7 @@
             color: #E53935;
         }
 
-        .plant-button {
+        .plant-button, .bet-button {
             background-color: #E53935;
             color: white;
             border: none;
@@ -90,6 +90,12 @@
             border-radius: 25px;
             cursor: pointer;
             margin-bottom: 20px;
+        }
+
+        .bet-button {
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
         }
 
         .message {
@@ -121,7 +127,7 @@
         }
 
         .popup-button {
-            background-color: #4A7023;
+            background-color: #E53935;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -129,6 +135,35 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 10px 5px;
+        }
+
+        .popup-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #4A7023;
+        }
+
+        .popup-select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #4A7023;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .or-text {
+            margin: 10px 0;
+            font-weight: bold;
+            color: #E53935;
         }
     </style>
 </head>
@@ -151,13 +186,33 @@
 
     <div class="timer" id="timer">05:00</div>
 
-    <button class="plant-button" id="plantBtn">Plant</button>
+    <div class="button-container">
+        <button class="plant-button" id="plantBtn">Plant</button>
+        <div class="or-text">Or</div>
+        <button class="bet-button" id="betBtn">Make a commitment bet to reach your goals!</button>
+    </div>
 
     <div class="popup" id="commitmentPopup">
         <div class="popup-content">
             <p>I commit to be Productive in the next 5 minutes!</p>
             <button class="popup-button" id="commitBtn">I Commit!</button>
             <button class="popup-button" id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+
+    <div class="popup" id="betPopup">
+        <div class="popup-content">
+            <h2>Set Your Goal</h2>
+            <input type="text" id="goalInput" class="popup-input" placeholder="Enter your goal">
+            <input type="date" id="deadlineInput" class="popup-input">
+            <select id="starsInput" class="popup-select">
+                <option value="10">10 Stars</option>
+                <option value="20">20 Stars</option>
+                <option value="50">50 Stars</option>
+                <option value="100">100 Stars</option>
+            </select>
+            <button class="popup-button" id="confirmBetBtn">Confirm Bet</button>
+            <button class="popup-button" id="cancelBetBtn">Cancel</button>
         </div>
     </div>
 
@@ -180,6 +235,13 @@
         const commitmentPopup = document.getElementById('commitmentPopup');
         const commitBtn = document.getElementById('commitBtn');
         const cancelBtn = document.getElementById('cancelBtn');
+        const betBtn = document.getElementById('betBtn');
+        const betPopup = document.getElementById('betPopup');
+        const confirmBetBtn = document.getElementById('confirmBetBtn');
+        const cancelBetBtn = document.getElementById('cancelBetBtn');
+        const goalInput = document.getElementById('goalInput');
+        const deadlineInput = document.getElementById('deadlineInput');
+        const starsInput = document.getElementById('starsInput');
 
         function updateDisplay() {
             const minutes = Math.floor(seconds / 60);
@@ -224,8 +286,9 @@
             seconds = 300;
             isActive = false;
             plantBtn.textContent = 'Plant';
-            messageDisplay.textContent = 'Start planting today!';
+            messageDisplay.textContent = 'Start being productive today!';
             updateDisplay();
+            // Reset to the first image
             plantImage1.style.opacity = '1';
             plantImage2.style.opacity = '0';
         }
@@ -263,6 +326,31 @@
             Telegram.WebApp.close();
         });
         Telegram.WebApp.MainButton.show();
+
+        betBtn.addEventListener('click', showBetPopup);
+        confirmBetBtn.addEventListener('click', confirmBet);
+        cancelBetBtn.addEventListener('click', hideBetPopup);
+
+        function showBetPopup() {
+            betPopup.style.display = 'flex';
+        }
+
+        function hideBetPopup() {
+            betPopup.style.display = 'none';
+        }
+
+        function confirmBet() {
+            const goal = goalInput.value;
+            const deadline = deadlineInput.value;
+            const stars = starsInput.value;
+
+            if (goal && deadline) {
+                Telegram.WebApp.showAlert(`Bet confirmed! Your goal: "${goal}" by ${deadline}. You bet ${stars} stars.`);
+                hideBetPopup();
+            } else {
+                Telegram.WebApp.showAlert('Please fill in all fields.');
+            }
+        }
     </script>
 </body>
 </html>
